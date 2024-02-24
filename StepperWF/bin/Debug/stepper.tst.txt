@@ -1,8 +1,12 @@
 GetFwVerStr
-MONITORSWITCHES,60000
+#Monitor switches, forces for 60 seconds
+MONITORSWITCHES,960000
 READSWITCHES
-IFRETURNISNOT,%cannulaLeft%,True,ALERT,Left cannula not engaged; please correct
+#Check cannula, carriage are active, prompt for correction if not
+IFRETURNISNOT,%cannulaLeft%,False,ALERT,Left cannula not engaged; please correct
+READSWITCHES
 IFRETURNISNOT,%carriageLeft%,False,ALERT,Left carriage not engaged; please correct
+#Initialize motor 1
 Init2209
 SetCurrentAxis,1
 SetMovePolarity,False
@@ -14,6 +18,15 @@ SetMaxTravel,200000
 SetHomingSpeed,20000
 InitializeAxis
 WAIT,1
+#Homing switch test
+MoveRelative,1000
+GetPosition,1
+SET,position,%response%
+InitializeAxis
+GetLastInitPosition
+SET,lastInit,%response%
+#End Homing Switch test
+#Start DC motor rotation
 EXECUTE,C:\Users\S2\source\repos\RoboClawWF1\bin\x64\Debug\WindowsApplication.exe RotateSlow.tst.txt
 GetCurrentMotorStatus
 SLEEP,1000
@@ -22,67 +35,83 @@ WAIT,1
 GetCurrentMotorStatus
 LOGERROR,Starting stamp test
 SLEEP,5000
+#Move and record force sensor reading
 MoveToPosition,20000
 SLEEP,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 20000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,20000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 40000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,20000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 60000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,20000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 80000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,20000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 100000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 102000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 104000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 106000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 108000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 110000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 112000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 114000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 116000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 118000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 120000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
@@ -91,10 +120,12 @@ MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 124000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 126000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
@@ -103,71 +134,91 @@ MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 130000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 132000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 134000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 136000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 138000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 140000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 142000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 144000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 146000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 148000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 150000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 152000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 154000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 156000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 158000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,2000
 WAIT,1
 READSWITCHES
 LOGERROR,Position= 160000 Force = %forceLeft%
+#Move and record force sensor reading
 MoveRelative,20000
 WAIT,1
 READSWITCHES
+#Move and record force sensor reading
 LOGERROR,Position= 180000 Force = %forceLeft%
+#Plot force vs Position (Python script)
 EXECUTE,python PlotStampTest.py
-MoveRelative,-120000
+MoveRelative,-130000
+#Stop DC Motor rotation
 EXECUTE,C:\Users\S2\source\repos\RoboClawWF1\bin\x64\Debug\WindowsApplication.exe stop.tst.txt
+#Monitor switches, forces for 60 seconds
 MONITORSWITCHES,60000

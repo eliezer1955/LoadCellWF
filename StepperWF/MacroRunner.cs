@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace StepperWF
+namespace LoadCellWF
 {
     public class MacroRunner
     {
@@ -58,7 +58,7 @@ namespace StepperWF
         public SerialTransport serialPort;
         StreamReader fs = null;
         NetworkStream ns = null;
-        StepperController controller = null;
+        LoadCellController controller = null;
         bool socketMode = false;
         public PipeClient pipeClient = null;
         private string[] Macro;
@@ -105,7 +105,7 @@ namespace StepperWF
             return v.ToString();
         }
 
-        public MacroRunner(StepperController sc, PipeClient pipeClientin, string filename = null)
+        public MacroRunner(LoadCellController sc, PipeClient pipeClientin, string filename = null)
         {
             //System.Diagnostics.Debugger.Launch();
             serialPort = sc._serialTransport;
@@ -553,7 +553,7 @@ namespace StepperWF
                     {
                         MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                         DialogResult result;
-                        result = MessageBox.Show(parsedLine[1], "Stepper Alert!", buttons);
+                        result = MessageBox.Show(parsedLine[1], "LoadCell Alert!", buttons);
                         response = result.ToString();
                         string[] resp1 = response.Split(',');
                         changeVar("response", resp1[0]);
@@ -574,7 +574,7 @@ namespace StepperWF
                         var i = line.IndexOf(',');
                         if (i > -1)
                         {
-                            pipeClient.client.Send("Stepper:" + line.Substring(i + 1));
+                            pipeClient.client.Send("LoadCell:" + line.Substring(i + 1));
                             continue;
                         }
                     }

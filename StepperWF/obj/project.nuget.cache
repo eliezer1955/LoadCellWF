@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "si5ApttJBMlVPcq9b1s/l2wclxQSHqW9W6ecj3txqhe9C4ri+5UqLIy7Ux6NeOsrQWHUXqiBXrArPoc1x8icRw==",
+  "dgSpecHash": "pYTw9kYOxHMNeVUSZ6xpu9UmSx9mfZCPdzXahOKpum3gdioM09OLhbbdLkFDn8MAJhqDOQZFBUe72jVYtuxDTg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\S2\\source\\repos\\StepperWF1\\StepperWF\\StepperWF.csproj",
+  "projectFilePath": "C:\\Users\\rosengau\\source\\repos\\LoadCell\\StepperWF\\LoadCellWF.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\S2\\.nuget\\packages\\log4net\\2.0.15\\log4net.2.0.15.nupkg.sha512",
-    "C:\\Users\\S2\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "C:\\Users\\rosengau\\.nuget\\packages\\log4net\\2.0.15\\log4net.2.0.15.nupkg.sha512",
+    "C:\\Users\\rosengau\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }

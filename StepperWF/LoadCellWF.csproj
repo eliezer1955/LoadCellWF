@@ -116,7 +116,7 @@
     <Compile Include="SerialSettings.cs" />
     <Compile Include="SerialTransport.cs" />
     <Compile Include="SerialUtils.cs" />
-    <Compile Include="StepperController.cs" />
+    <Compile Include="LoadCellController.cs" />
     <Compile Include="StreamString.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="StructSerializer.cs" />

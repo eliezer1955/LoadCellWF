@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace StepperWF
+namespace LoadCellWF
 {
     internal static class Program
     {
@@ -21,7 +21,7 @@ namespace StepperWF
             string serialNumber = cm.GetComPort("SerialNumber");
             var configFile = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.config"));
             log4net.Config.XmlConfigurator.Configure(configFile);
-            _logger.Info("SN" + serialNumber+ " StepperDiag is starting...");
+            _logger.Info("SN" + serialNumber+ " LoadCellDiag is starting...");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

@@ -10,12 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace StepperWF
+namespace LoadCellWF
 {
     public partial class Form1 : Form
     {
-        public string CurrentMacro = "stepper.tst.txt";
-        public StepperController stepperController;
+        public string CurrentMacro = "loadcell.tst.txt";
+        public LoadCellController loadCellController;
         public string[] CmdLineArgs;
         public bool stopMonitoring = false;
         public string serialNumber;
@@ -27,16 +27,16 @@ namespace StepperWF
                 CurrentMacro = args[0];
             InitializeComponent();
             button2.Text = CurrentMacro;
-            stepperController = new StepperController(CurrentMacro, this);
+            loadCellController = new LoadCellController(CurrentMacro, this);
             if (CmdLineArgs.Length > 0)
                 if (CmdLineArgs[0] == "Slave")
                 {
-                    Thread runner = new Thread( () => stepperController.SocketMode( CmdLineArgs ) );
+                    Thread runner = new Thread( () => loadCellController.SocketMode( CmdLineArgs ) );
                     runner.Start();
                 }
                 else
                 {
-                    MacroRunner macroRunner = new MacroRunner( stepperController, null, CurrentMacro );
+                    MacroRunner macroRunner = new MacroRunner( loadCellController, null, CurrentMacro );
                     macroRunner.RunMacro();
                 }
 
@@ -46,7 +46,7 @@ namespace StepperWF
         {
             Control[] macro = this.Controls.Find("button2", true);
             string CurrentMacro = macro[0].Text;
-            MacroRunner macroRunner = new MacroRunner(stepperController,null, CurrentMacro);
+            MacroRunner macroRunner = new MacroRunner(loadCellController,null, CurrentMacro);
             macroRunner.RunMacro();
         }
 

@@ -21,7 +21,7 @@ public class PipeClient
     public string lastResponse = null;
     public readonly object _writerSemaphore = new object();
     public string cmdToSend = null;
-    public string name = "Stepper";
+    public string name = "LoadCell";
 
     public PipeClient()
     {
@@ -54,7 +54,7 @@ public class PipeClient
         await client.Connect();
         Console.WriteLine( "Connecting to server...\n" );
         semaphore.Wait();
-        await client.Send( "Stepper" );
+        await client.Send( "LoadCell" );
         Console.WriteLine( "Connected!...\n" );
     }
 

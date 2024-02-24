@@ -1,0 +1,17 @@
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\LoadCellWF.csproj.AssemblyReference.cache
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\StepperWF.Properties.Resources.resources
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\LoadCellWF.csproj.GenerateResource.cache
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\LoadCellWF.csproj.CoreCompileInputs.cache
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\StepperWF.exe
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\StepperWF.pdb
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\LoadCellWF.Form1.resources
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\PlotStampTest.py
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\stamp.tst.txt
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\stepper.tst.txt
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\log4net.config
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\StepperWF.exe.config
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\StepperWF.exe
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\StepperWF.pdb
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\log4net.dll
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\bin\Debug\Newtonsoft.Json.dll
+C:\Users\rosengau\source\repos\LoadCell\StepperWF\obj\Debug\LoadCellWF.csproj.CopyComplete
