@@ -1,8 +1,8 @@
-﻿using CommandMessenger.Transport.Serial;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.IO.Ports;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -55,7 +55,7 @@ namespace LoadCellWF
 
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(MacroRunner));
         public string CurrentMacro;
-        public SerialTransport serialPort;
+        public SerialPort serialPort;
         StreamReader fs = null;
         NetworkStream ns = null;
         LoadCellController controller = null;
@@ -64,10 +64,8 @@ namespace LoadCellWF
         private string[] Macro;
         private int currentline = 0;
         private System.Collections.Generic.Dictionary<string, int> label = new System.Collections.Generic.Dictionary<string, int>();
-        private String forceLeftString, forceRightString, opticalString, microSwitchString;
         private String response;
         private Dictionary<string, object> variables = new Dictionary<string, object>();
-        private string cannulaLeft, cannulaRight, carriageLeft, carriageRight, doorLeft, doorRight;
 
         private string ExpandVariables(string instring)
         {
@@ -108,7 +106,7 @@ namespace LoadCellWF
         public MacroRunner(LoadCellController sc, PipeClient pipeClientin, string filename = null)
         {
             //System.Diagnostics.Debugger.Launch();
-            serialPort = sc._serialTransport;
+            serialPort = sc.LoadCellPort;
             CurrentMacro = filename;
             pipeClient = pipeClientin;
             controller = sc;
@@ -130,18 +128,6 @@ namespace LoadCellWF
                 }
             }
             AddVar("response", response);
-            AddVar("forceLeft", forceLeftString);
-            AddVar("forceRight", forceRightString);
-            AddVar("optical", opticalString);
-            AddVar("microSwitch", microSwitchString);
-            AddVar("doorLeft", doorLeft);
-            AddVar("doorRight", doorRight);
-            AddVar("cannulaLeft", cannulaLeft);
-            AddVar("cannulaRight", cannulaRight);
-            AddVar("carriageLeft", carriageLeft);
-            AddVar("carriageRight", carriageRight);
-
-
         }
 
         public async Task<string> readLine()
@@ -164,155 +150,21 @@ namespace LoadCellWF
             return s;
         }
 
-        public long MonitorSwitches(long period)
-        {
-            long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            long currentTime = startTime;
-            this.controller.SetControlPropertyThreadSafe(controller.parent.button4, "Visible", true);
-            while (currentTime - startTime < period)
-            {
-                readSwitches();
-                currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                if (this.controller.parent.stopMonitoring)
-                {
-                    this.controller.parent.stopMonitoring = false;
-                    break;
-                }
-            }
-            this.controller.SetControlPropertyThreadSafe(controller.parent.button4, "Visible", false);
-            return period;
-        }
+       
 
         public void GetVersion()
         {
             Int32 commandNumber = this.controller.CommandNumber["GetFwVerStr"];
-            CommandMessenger.SendCommand cmd = new CommandMessenger.SendCommand(commandNumber);
+            SerialMessenger.SendCommand  cmd = new SerialMessenger.SendCommand(commandNumber);
             cmd.ReqAc = true;
-            CommandMessenger.ReceivedCommand responseCmd = this.controller._cmdMessenger.SendCommand(cmd);
+            SerialMessenger.ReceivedCommand responseCmd = this.controller._cmdMessenger.Send(cmd);
             string response = responseCmd.RawString;
             this.controller.SetControlPropertyThreadSafe(controller.parent.label7, "Text", response);
         }
 
-        public float readFlexi(Int16 bank = 1)
-        {
-            Int32 commandNumber = controller.CommandNumber["GetFlexiForce"];
-            float reslt = 0;
-            Int32 response1 = controller.commandStructure[commandNumber].response;
-            if (response1 < 0) response1 = commandNumber; //use default response
-            Int32 parametersRequired = controller.commandStructure[commandNumber].parameters.Length;
-            CommandMessenger.SendCommand cmd = new CommandMessenger.SendCommand(commandNumber, response1,
-                                                                                 controller.commandStructure[commandNumber].timeout);
-            cmd.AddArgument(bank);
-            cmd.ReqAc = true;
-            if (cmd.Ok)
-            {
-                CommandMessenger.ReceivedCommand responseCmd = controller._cmdMessenger.SendCommand(cmd);
-                if (responseCmd.RawString != null)
-                {
-                    string response = responseCmd.RawString;
-                    string[] line1 = response.Split(',');
-                    line1 = line1[2].Split(';');
-                    response = line1[0];
-                    reslt = float.Parse(response);
-                }
-            }
+       
 
-            return reslt;
-        }
-
-        public Int16 readSwitch(Int16 bank = 1)
-        {
-            Int32 commandNumber = controller.CommandNumber["GetSwitchSet"];
-            Int16 reslt = 0;
-            Int32 response1 = controller.commandStructure[commandNumber].response;
-            if (response1 < 0) response1 = commandNumber; //use default response
-            Int32 parametersRequired = controller.commandStructure[commandNumber].parameters.Length;
-            CommandMessenger.SendCommand cmd = new CommandMessenger.SendCommand(commandNumber, response1,
-                                                                                 controller.commandStructure[commandNumber].timeout);
-            cmd.AddArgument(bank);
-            cmd.ReqAc = true;
-            if (cmd.Ok)
-            {
-                CommandMessenger.ReceivedCommand responseCmd = controller._cmdMessenger.SendCommand(cmd);
-                if (responseCmd.RawString != null)
-                {
-                    string response = responseCmd.RawString;
-                    string[] line1 = response.Split(',');
-                    line1 = line1[2].Split(';');
-                    response = line1[0];
-                    reslt = Int16.Parse(response);
-                }
-            }
-
-            return reslt;
-        }
-        public void selectAxis(Int32 axis)
-        {
-            Int32 commandNumber = 17; //set current axis
-            Int32 response1 = controller.commandStructure[commandNumber].response;
-            if (response1 < 0) response1 = commandNumber; //use default response
-            Int32 parametersRequired = controller.commandStructure[commandNumber].parameters.Length;
-            CommandMessenger.SendCommand cmd = new CommandMessenger.SendCommand(commandNumber, response1,
-                                                                                 controller.commandStructure[commandNumber].timeout);
-            cmd.ReqAc = true;
-            if (cmd.Ok)
-            {
-                CommandMessenger.ReceivedCommand responseCmd = controller._cmdMessenger.SendCommand(cmd);
-            }
-        }
-
-        public void readSwitches()
-        {
-            //selectAxis( 1 );
-            Int16 microSwitches = readSwitch(1);
-            //selectAxis( 2 );
-            Int16 optical = readSwitch(2);
-            float forceLeft = readFlexi(1);
-            float forceRight = readFlexi(2);
-            forceLeftString = forceLeft.ToString();
-            forceRightString = forceRight.ToString();
-            opticalString = optical.ToString();
-            microSwitchString = microSwitches.ToString();
-            controller.parent.textBox1.Text = forceLeft.ToString();
-            controller.parent.textBox2.Text = forceRight.ToString();
-            cannulaLeft = ((microSwitches & (short)0x01) != 0).ToString();
-            cannulaRight = ((microSwitches & (short)0x02) != 0).ToString();
-            doorLeft = ((optical & (short)0x01) != 0).ToString();
-            doorRight = ((optical & (short)0x04) != 0).ToString();
-            carriageLeft = ((optical & (short)0x08) != 0).ToString();
-            carriageRight = ((optical & (short)0x02) != 0).ToString();
-
-            //update variables dictionary
-            changeVar("forceLeft", forceLeftString);
-            changeVar("forceRight", forceRightString);
-            changeVar("forceLeft", forceLeft);
-            changeVar("microSwitch", microSwitchString);
-            changeVar("optical", opticalString);
-            changeVar("cannulaLeft", cannulaLeft);
-            changeVar("cannulaRight", cannulaRight);
-            changeVar("doorLeft", doorLeft);
-            changeVar("doorRight", doorRight);
-            changeVar("carriageLeft", carriageLeft);
-            changeVar("carriageRight", carriageRight);
-
-            //update GUI
-            controller.SetControlPropertyThreadSafe(controller.parent.checkBox3, "Checked", (microSwitches & (short)0x01) != 0);
-            controller.SetControlPropertyThreadSafe(controller.parent.checkBox6, "Checked", (microSwitches & (short)0x02) != 0);
-            controller.SetControlPropertyThreadSafe(controller.parent.checkBox1, "Checked", (optical & (short)0x01) != 0);
-            controller.SetControlPropertyThreadSafe(controller.parent.checkBox2, "Checked", (optical & (short)0x04) != 0);
-            controller.SetControlPropertyThreadSafe(controller.parent.checkBox5, "Checked", (optical & (short)0x08) != 0);
-            controller.SetControlPropertyThreadSafe(controller.parent.checkBox4, "Checked", (optical & (short)0x02) != 0);
-            controller.SetControlPropertyThreadSafe(controller.parent.textBox1, "BackColor", (forceLeft < -3 || forceLeft >  6) ? System.Drawing.Color.Crimson: System.Drawing.Color.LimeGreen);
-            controller.SetControlPropertyThreadSafe(controller.parent.textBox2, "BackColor", (forceLeft < -3 || forceRight > 6 )? System.Drawing.Color.Crimson : System.Drawing.Color.LimeGreen);
-            forceLeft = 50 + forceLeft / 2; //empirical scaling
-            forceRight = 50 + forceRight / 2;
-            forceLeft = Math.Min(Math.Max(forceLeft, 0), 100);
-            forceRight = Math.Min(Math.Max(forceRight, 0), 100);
-            controller.parent.forceLeft.Value = (int)Math.Round(forceLeft, 0);
-            controller.parent.forceRight.Value = (int)Math.Round(forceRight, 0);
-            refreshGUI();
-
-        }
+       
         public async void RunMacro()
         {
             //  Read in macro stream
@@ -511,11 +363,11 @@ namespace LoadCellWF
                         {
                             Int32.Parse(parsedLine[1]);
                             //serialPort.WriteLine( "/Q" + parsedLine[1] + "R" );
-                            CommandMessenger.ReceivedCommand responseCmd;
+                            SerialMessenger.ReceivedCommand responseCmd;
 
-                            CommandMessenger.SendCommand cmd = new CommandMessenger.SendCommand(7, 7,
+                            SerialMessenger.SendCommand cmd = new SerialMessenger.SendCommand(7, 7,
                                                      controller.commandStructure[7].timeout);
-                            responseCmd = controller._cmdMessenger.SendCommand(cmd);
+                            responseCmd = controller._cmdMessenger.Send(cmd);
                             string[] line2 = responseCmd.RawString.TrimEnd('\r', '\n').Split(',');
                             if (line2.Length < 3 || line2[2][0] == '1') continue; //isolate status
                             motionDone = true;
@@ -524,23 +376,7 @@ namespace LoadCellWF
                     }
                     continue;
                 }
-                // Read switches, update GUI display
-                if (line.StartsWith("READSWITCHES"))
-                {
-                    string[] line1 = line.Split('#'); //Disregard comments
-                    string[] parsedLine = line1[0].Split(',');
-                    readSwitches();
-                    continue;
-                }
-
-                // Read switches continuously for period of time, update GUI display
-                if (line.StartsWith("MONITORSWITCHES"))
-                {
-                    string[] line1 = line.Split('#'); //Disregard comments
-                    string[] parsedLine = line1[0].Split(',');
-                    MonitorSwitches(long.Parse(parsedLine[1]));
-                    continue;
-                }
+               
                 // Pop up MessageBox
                 if (line.StartsWith("ALERT"))
                 {
@@ -599,7 +435,7 @@ namespace LoadCellWF
                     Int32 response1 = controller.commandStructure[commandNumber].response;
                     if (response1 < 0) response1 = commandNumber; //use default response
                     Int32 parametersRequired = controller.commandStructure[commandNumber].parameters.Length;
-                    CommandMessenger.SendCommand cmd = new CommandMessenger.SendCommand(commandNumber, response1,
+                    SerialMessenger.SendCommand cmd = new SerialMessenger.SendCommand(commandNumber, response1,
                                                          controller.commandStructure[commandNumber].timeout);
                     //remember what this command is and what return types it has
                     lastCommand = lin1;
@@ -631,7 +467,7 @@ namespace LoadCellWF
                     cmd.ReqAc = true;
                     if (cmd.Ok)
                     {
-                        CommandMessenger.ReceivedCommand responseCmd = controller._cmdMessenger.SendCommand(cmd);
+                        SerialMessenger.ReceivedCommand responseCmd = controller._cmdMessenger.Send(cmd);
                         if (responseCmd.RawString != null)
                         {
                             Console.WriteLine(String.Format(">>>>{0}<<<{1}", cmd.CmdId, responseCmd.RawString.Trim()));
@@ -656,9 +492,6 @@ namespace LoadCellWF
                             continue;
                         }
 
-
-                        controller._cmdMessenger.ClearReceiveQueue();
-                        controller._cmdMessenger.ClearSendQueue();
                     }
                     else
                         Console.WriteLine(string.Format("Unknown command {n} issued\n", cmd.CmdId));
